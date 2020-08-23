@@ -1,0 +1,344 @@
+Java 8 featuers:
+---------------------
+Came out in March 2014
+
+The main objective of java 8  is to enable the functional programming in java .
+
+
+1. Lambda Expressions
+2. Functional Interfaces
+3. Default Methods and Static Methods
+4. Predifined Functional Interfaces
+   	Predicate
+   	Function
+	Consumer 
+	Supplier
+	etc
+5. Double colon Operator(::)
+   	Use for method reference
+	Use for Constructor reference
+6. Streams
+7. Date and Time API
+8. Optional class
+9. Nashorn javascript engine 
+etc
+
+
+
+
+
+
+
+1 . Lambda expression (->)
+--------------------------------------
+ LISP is the first Programming Lang used
+ The Main objective of Lamda Expresson to bring benifits of functional programming in java.
+ What is Lambda Expression:
+-------------------------------
+It is an annonymous function
+	Nameless
+	Without return type
+	Without Modifiers
+
+Ex:
+-----
+()->{System.out.println("Hello");}
+
+Note: Curly braces are optional. If we want write multiple lines we can use curly braces.
+-----
+eg:
+----
+(a,b)->System.out.println(a+b);
+eg:
+---
+(int n)->{ return n*n; } 
+(int n) -> n*n;
+(n)-> n*n;
+n->n*n;
+Note: If curly braces are used then return must be there;
+       If input parameters are  one then parenthsis are optional . If more than one parameter used, then parenthsis must used.
+
+
+ 
+-----
+import java.util.function.*;
+class Test{
+public static void main(String a[]){
+ Function<Integer,Integer> f= i-> i*i; ---To get the square of a number
+ Predicate<Integer> p=i->i%2==0;  ---- To get the even number or number 
+********
+
+-------------------------------------------------------------------------------
+n->return n*n;    =======>Invalid
+n->{return n*n;}; =======>valid
+n->{return n*n};  =======>Invalid
+n->{n*n;};        =======>Valid
+n->n*n;           ========>valid
+
+Without curly braces we cannot use return keyword . Compiler will consider returned value
+automatically
+Within curly braces if we want to return some value compulsory we should use 
+return statement
+
+--------------------------------------------------------------------------
+
+To call(Invoke) lamba expression compulsory functional interface is required.
+************ 				    *********************		
+-----------------------------------------------
+*******2.FI==> Functional Interface*************
+
+Runnable==>run()
+Comparable==>compareTo()
+Comparator==>compare()
+ActionListener==>actionPerformed()
+Callable==>call()
+
+
+An  interface which contain single abstract methods(SAM) known as Functional Interface
+
+@FunctionalInterface
+ interface Interf{
+ 	public void m1();
+	 public void m2(){
+
+ 	}
+	 static void m3(){
+
+	 }
+}
+
+using @FunctionalInterface is optional
+
+******Functional Interface wrt Inheritance**********
+------------------------------------------------------------
+
+@FunctionalInterface
+interface A{
+	public void m1()
+}
+
+@FunctionalInterface
+interface B extends A
+{
+}
+ The above example is perfectly valid for FI since child interface can herit the 
+propeties of parent interface ,provided child interface doesnt 
+have its own abstract methods
+-------------------------------------------
+@FunctionalInterface
+interface A{
+	public void m1()
+}
+
+@FunctionalInterface
+interface B extends A
+{
+	public void m1()
+}
+ Valid one because child is overriding the parent interface
+
+--------------------------------------------------------------
+@FunctionalInterface
+interface A{
+	public void m1()
+}
+
+@FunctionalInterface
+interface B extends A
+{
+	public void m2()
+}
+
+Invalid one because child have multiple abstrace methods which violates the 
+@FunctionalInterface
+
+***Error will come as multiple non-overriding methods found in Interface B****
+
+-----------------------------------------------------
+@FunctionalInterface
+interface A{
+	public void m1()
+}
+
+
+interface B extends A
+{
+	public void m2()
+}
+
+valid one because it not an @FunctionalInterface
+
+-----------------------------------------------------
+=================
+********Lamda Expression with functional Interface********
+
+interface Interf{
+	public void m1()
+}
+class Demo implements Interf{
+	public void m1(){
+
+	system.out.print("hello");
+}
+}
+class Test{
+	public static void main(String a[]){
+	Demo d=new Demo()
+	d.m1();
+	
+}
+}
+
+normal implementation 
+-----------------------------------------
+interface Interf{
+	public void m1()
+}
+class Demo implements Interf{
+	public void m1(){
+
+	system.out.print("hello");
+}
+}
+
+class Test{
+	public static void main(String a[]){
+	Interf i=new Demo()
+	i.m1()               
+	
+}
+}
+valid one because parent reference can use to hold child object
+
+---------------------------------------------------------
+interface Interf{
+	public void m1()
+}
+
+
+class Test{
+	public static void main(String a[]){
+	Interf i=()->system.out.print("Hello using lamda expression");
+	  i.m1();             
+	
+}
+}
+
+Eg:
+--
+interface Interf{
+	public void add(int a,int b)
+}
+
+
+class Test{
+	public static void main(String a[]){
+	Interf i=(a,b)->system.out.print("The sum is "+(a+b));
+	  i.add(4,5);             
+	
+}
+}
+
+ ******MultiThreading****
+
+--> By Implementing Runnable Interface
+--> By Extending Thread Class
+
+class MyRunnable implements Runnable
+{
+	public void run(){
+		for(int i=0;i<10;i++){
+			System.out.println("Child thread");
+		}
+	}
+}
+class Test{
+	public static void mani(String a[]){
+	
+	MyRunnable r= new MyRunnable();
+	Thread t=new Thread(r);
+	t.start();
+	for(int i=0;i<10;i++){
+		System.ot.print("Main thread");
+	}
+
+	}
+}
+Normal implementation
+
+-----------------------
+class Test{
+	public static void mani(String a[]){
+	
+	Runnable r=()->{
+		for(int i=0;i<10;i++){
+			System.out.println("Child thread");
+		}
+	};
+	Thread t=new Thread(r);
+	t.start();
+	for(int i=0;i<10;i++){
+		System.ot.print("Main thread");
+	}
+
+	}
+}
+Using lambda expresssion
+
+------------------------------------------
+***********Collections
+import java.util.*;
+class MyComp implements Comparator{
+public int compare(Integer a,Integer b){
+	
+	return (a<b)?-1:(a>b)?1:0;
+
+	if(a<b){
+		return -1;
+	}
+	else if(a>b){
+		return 1;
+	}
+	else{	
+		return 0;
+	}
+}
+}
+class Test{
+	public static void main(String a[]){
+		ArrayList<Integer> l= new ArrayList<Integer>();
+		l.add(10);
+		l.add(15);
+		l.add(20);
+		l.add(30);
+		System.out.print(l);
+		Collections<Integer> c=(a,b)->(a<b)?-1:(a>b)?1:0;
+		Collections.sort(l,c);
+		Collections.sort(l,new MyComp());
+		S.op(l);
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
